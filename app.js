@@ -9,8 +9,8 @@
    ===================================================================== */
 
 const express = require("express");
-const { PLANS, SETTINGS, findPlan } = require("./lib/plans");
-const { setStatus, getStatus } = require("./lib/store");
+const { PLANS, SETTINGS, findPlan } = require("/lib/plans");
+const { setStatus, getStatus } = require("/lib/store");
 
 const app = express();
 
