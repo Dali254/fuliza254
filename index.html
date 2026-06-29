@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title> FULIZA LIMIT Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0F1E16; --muted:#46564c; --soft:#6b7a70;
+    --green:#16A34A; --green-700:#0F6E34; --green-50:#EAF8EF;
+    --lime:#C7F284; --danger:#DC2626; --amber:#B45309; --ring:rgba(124,210,150,.55);
+    --glass:rgba(255,255,255,.68);
+    --glass-strong:rgba(255,255,255,.8);
+    --glass-soft:rgba(255,255,255,.44);
+    --gborder:rgba(255,255,255,.6);
+    --gborder-soft:rgba(255,255,255,.36);
+    --sh:0 22px 55px -26px rgba(0,0,0,.6);
+    --r:24px; --r-md:16px; --r-sm:12px;
+    --blur:saturate(160%) blur(18px);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0; min-height:100%;}
+  body{
+    font-family:"Plus Jakarta Sans",system-ui,sans-serif; color:var(--ink); line-height:1.5;
+    min-height:100vh; padding:24px 14px 48px; display:flex; justify-content:center;
+    -webkit-font-smoothing:antialiased; position:relative;
+  }
+  /* full-page background image (fixed) + readability overlay */
+  body::before{ content:""; position:fixed; inset:0; z-index:-2;
+    background:var(--hero, linear-gradient(135deg,#1f8c4f,#0c4a2b)) center/cover no-repeat; }
+  body::after{ content:""; position:fixed; inset:0; z-index:-1;
+    background:
+      radial-gradient(900px 520px at 12% -5%, rgba(124,210,150,.28), transparent 60%),
+      radial-gradient(800px 500px at 100% 110%, rgba(21,163,74,.30), transparent 55%),
+      linear-gradient(160deg, rgba(6,38,23,.50) 0%, rgba(5,28,17,.84) 100%); }
+  .wrap{ width:100%; max-width:600px; }
+
+  /* header text directly on the photo */
+  .hero{ text-align:left; color:#fff; padding:12px 6px 22px; background:none; border:0; box-shadow:none; }
+  .badge{ display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:#fff;
+    background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3); padding:7px 13px; border-radius:999px;
+    -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); }
+  .badge .dot{ width:7px; height:7px; border-radius:50%; background:var(--lime); box-shadow:0 0 0 3px rgba(199,242,132,.3); }
+  .hero h1{ font-family:"Sora",sans-serif; font-weight:800; letter-spacing:-.02em; font-size:clamp(28px,7.5vw,44px); line-height:1.04; margin:16px 0 8px; max-width:15ch; text-shadow:0 2px 30px rgba(0,0,0,.35); }
+  .hero p{ margin:0; color:rgba(255,255,255,.9); font-size:clamp(14px,3.7vw,16px); max-width:42ch; text-shadow:0 1px 16px rgba(0,0,0,.3); }
+
+  /* glass cards */
+  .card{ background:var(--glass); border:1px solid var(--gborder); border-radius:var(--r); box-shadow:var(--sh);
+    padding:clamp(18px,4.5vw,28px); margin-top:0; -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); }
+  .card + .card{ margin-top:16px; }
+  .label{ font-weight:700; font-size:15px; margin:0 0 4px; color:var(--ink); }
+  .hint{ margin:0 0 16px; font-size:13.5px; color:var(--muted); }
+  .plans-msg{ font-size:14px; color:var(--muted); margin:10px 2px 0; }
+
+  /* glass plan tiles */
+  .plans{ display:grid; gap:11px; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+  .plan{ position:relative; text-align:left; cursor:pointer; font:inherit; color:var(--ink);
+    background:var(--glass-soft); border:1px solid var(--gborder-soft); border-radius:var(--r-md); padding:15px 16px;
+    -webkit-backdrop-filter:saturate(140%) blur(8px); backdrop-filter:saturate(140%) blur(8px);
+    transition:transform .12s cubic-bezier(.2,.8,.2,1), border-color .15s, box-shadow .2s, background .2s; }
+  .plan:hover{ background:rgba(255,255,255,.62); border-color:#fff; transform:translateY(-2px); box-shadow:0 14px 28px -16px rgba(0,0,0,.45); }
+  .plan:active{ transform:translateY(0) scale(.99); }
+  .plan:focus-visible{ outline:none; box-shadow:0 0 0 4px var(--ring); }
+  .plan .cap{ display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+  .plan .num{ font-family:"Sora",sans-serif; font-weight:800; font-size:clamp(24px,6vw,30px); line-height:1; letter-spacing:-.02em; }
+  .plan .num small{ font-family:"Plus Jakarta Sans",sans-serif; font-weight:600; font-size:12px; color:var(--muted); margin-left:5px; }
+  .plan .fee-row{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-top:14px; padding-top:11px; border-top:1px solid rgba(15,30,22,.14); }
+  .plan .fee-k{ font-size:12px; font-weight:600; color:var(--muted); }
+  .plan .fee-v{ font-family:"Sora",sans-serif; font-size:16px; font-weight:700; color:var(--green-700); }
+  .plan[aria-checked="true"]{ color:#fff; border-color:transparent; background:linear-gradient(140deg, rgba(26,178,87,.96), rgba(15,110,52,.96)); box-shadow:0 18px 34px -16px rgba(15,110,52,.75); }
+  .plan[aria-checked="true"] .cap, .plan[aria-checked="true"] .num small{ color:rgba(255,255,255,.82); }
+  .plan[aria-checked="true"] .fee-row{ border-top-color:rgba(255,255,255,.3); }
+  .plan[aria-checked="true"] .fee-k{ color:rgba(255,255,255,.85); }
+  .plan[aria-checked="true"] .fee-v{ color:#fff; }
+
+  /* glass modal */
+  dialog.modal{ border:1px solid var(--gborder); padding:0; border-radius:26px; width:min(440px, calc(100% - 26px));
+    background:var(--glass-strong); color:var(--ink); box-shadow:var(--sh);
+    -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); }
+  dialog.modal::backdrop{ background:rgba(5,24,15,.5); -webkit-backdrop-filter:blur(7px); backdrop-filter:blur(7px); }
+  dialog.modal[open]{ animation:modalIn .26s cubic-bezier(.2,.8,.2,1); }
+  @keyframes modalIn{ from{ transform:translateY(14px) scale(.97); opacity:0; } to{ transform:none; opacity:1; } }
+  .modal-in{ padding:24px 22px 22px; }
+  .modal-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .modal-plan{ display:flex; align-items:flex-end; gap:22px; }
+  .modal-plan .mp-col{ display:flex; flex-direction:column; gap:5px; }
+  .modal-plan .mp-cap{ font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+  .modal-plan .mp-num{ font-family:"Sora",sans-serif; font-weight:800; font-size:28px; line-height:1; letter-spacing:-.02em; }
+  .modal-plan .mp-num small{ font-family:"Plus Jakarta Sans",sans-serif; font-weight:600; font-size:12px; color:var(--muted); margin-left:5px; }
+  .modal-plan .mp-fee{ font-family:"Sora",sans-serif; font-weight:800; font-size:24px; line-height:1; color:var(--green-700); }
+  .x{ flex:none; width:34px; height:34px; border-radius:10px; border:1px solid var(--gborder); background:rgba(255,255,255,.45); color:var(--muted); font-size:18px; cursor:pointer; line-height:1; }
+  .x:hover{ background:#fff; color:var(--ink); }
+  .modal-title{ font-weight:700; font-size:15px; margin:18px 0 2px; }
+
+  /* inputs */
+  .field{ display:block; margin-top:12px; }
+  .field-label{ display:block; font-size:13px; font-weight:600; margin-bottom:7px; }
+  .input{ width:100%; padding:14px 15px; font:inherit; color:var(--ink); background:rgba(255,255,255,.66);
+    border:1px solid var(--gborder); border-radius:var(--r-sm); transition:border-color .15s, box-shadow .15s, background .15s; }
+  .input::placeholder{ color:#7c8a80; }
+  .input:focus{ outline:none; border-color:var(--green); background:#fff; box-shadow:0 0 0 4px var(--ring); }
+  .input.invalid{ border-color:var(--danger); box-shadow:0 0 0 4px rgba(220,38,38,.14); }
+  .input:disabled{ background:rgba(240,242,238,.7); }
+  .error{ display:block; margin-top:7px; font-size:13px; color:var(--danger); font-weight:600; }
+
+  /* buttons */
+  .proceed, .pay{ width:100%; margin-top:20px; padding:16px; font:inherit; font-weight:700; font-size:16px; color:#fff; border:none; border-radius:14px; cursor:pointer; background:linear-gradient(135deg,#1AB257,#0F6E34); box-shadow:0 16px 30px -12px rgba(15,110,52,.7); transition:filter .15s, transform .1s, opacity .15s; }
+  .proceed:hover, .pay:hover{ filter:brightness(1.06); }
+  .proceed:active, .pay:active{ transform:translateY(1px); }
+  .pay:disabled{ background:rgba(200,210,203,.8); box-shadow:none; cursor:not-allowed; }
+  .proceed:focus-visible, .pay:focus-visible{ outline:none; box-shadow:0 0 0 4px var(--ring); }
+  .pay-hint{ margin:16px 2px 10px; font-size:13.5px; font-weight:600; color:var(--green-700); text-align:center; }
+  #payHero{ min-height:54px; }
+  .status, .pay-status{ display:flex; gap:11px; align-items:center; margin:14px 2px 0; font-size:14px; font-weight:600; color:var(--amber); }
+  .status.err, .pay-status.err{ color:var(--danger); }
+  .spin{ flex:none; width:17px; height:17px; border:2.5px solid rgba(180,83,9,.28); border-top-color:var(--amber); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .reassure{ margin:13px 2px 0; font-size:12px; color:var(--soft); text-align:center; }
+
+  /* success */
+  .success{ text-align:center; }
+  .check{ width:66px; height:66px; margin:2px auto 16px; display:grid; place-items:center; border-radius:50%; background:linear-gradient(140deg,#1AB257,#0F6E34); color:#fff; font-size:32px; font-weight:800; box-shadow:0 16px 30px -12px rgba(15,110,52,.6); animation:pop .4s cubic-bezier(.2,.9,.3,1.4); }
+  @keyframes pop{ from{ transform:scale(.5); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  .success-title{ font-family:"Sora",sans-serif; font-weight:800; font-size:clamp(21px,5.5vw,26px); margin:0 0 6px; }
+  .success-lede{ margin:0 0 20px; color:var(--muted); }
+  .receipt{ text-align:left; border:1px solid var(--gborder); border-radius:var(--r-md); overflow:hidden; margin-bottom:20px; background:rgba(255,255,255,.42); }
+  .receipt .row{ display:flex; justify-content:space-between; gap:14px; padding:12px 16px; font-size:14px; border-top:1px solid rgba(15,30,22,.1); }
+  .receipt .row:first-child{ border-top:none; }
+  .receipt .k{ color:var(--muted); }
+  .receipt .v{ font-weight:700; text-align:right; word-break:break-word; }
+  .receipt .v.ref{ color:var(--green-700); letter-spacing:.03em; }
+  .ghost{ width:100%; padding:15px; font:inherit; font-weight:700; font-size:15px; color:var(--green-700); background:rgba(255,255,255,.5); border:1px solid var(--gborder); border-radius:14px; cursor:pointer; transition:background .15s; }
+  .ghost:hover{ background:#fff; }
+
+  /* history glass */
+  .history{ margin-top:16px; background:var(--glass); border:1px solid var(--gborder); border-radius:var(--r); padding:clamp(16px,4vw,22px); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); box-shadow:var(--sh); }
+  .history h3{ margin:0 0 14px; font-size:15px; font-weight:700; }
+  .req{ display:flex; justify-content:space-between; gap:12px; align-items:flex-start; padding:12px 0; border-top:1px solid rgba(15,30,22,.1); }
+  .req:first-of-type{ border-top:none; }
+  .req-ref{ font-weight:700; color:var(--green-700); }
+  .req-sub{ font-size:12.5px; color:var(--muted); margin-top:2px; }
+  .tag{ flex:none; font-size:11px; font-weight:700; color:var(--green-700); background:rgba(234,248,239,.85); border:1px solid var(--gborder); padding:5px 10px; border-radius:999px; white-space:nowrap; }
+  .empty{ color:var(--muted); font-size:14px; margin:0; }
+  .link{ background:none; border:none; color:var(--muted); font-size:12.5px; text-decoration:underline; cursor:pointer; padding:0; margin-top:12px; }
+  .foot{ text-align:center; color:rgba(255,255,255,.8); font-size:12px; margin-top:18px; text-shadow:0 1px 14px rgba(0,0,0,.35); }
+
+  @media (max-width:380px){ .plans{ grid-template-columns:repeat(2,1fr); } }
+  @media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; } }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="hero">
+      <span class="badge"><span class="dot"></span> Pay with M-Pesa &middot; Delivered in 24h</span>
+      <h1 id="heroTitle"> INCREASE YOUR FULIZA LIMIT INSTANT</h1>
+      <p>Choose  your limit.</p>
+    </header>
+
+    <section class="card" id="requestCard">
+      <p class="label">Choose your limit</p>
+      <p class="hint">Tap a plan to enter your details and pay.</p>
+      <div class="plans" id="plans" role="radiogroup" aria-label="FULIZA LIMIT"></div>
+      <p class="plans-msg" id="plansMsg" hidden></p>
+    </section>
+
+    <section class="card success" id="successCard" hidden>
+      <div class="check" aria-hidden="true">&#10003;</div>
+      <h2 class="success-title">Payment received</h2>
+      <p class="success-lede" id="successLede">Please wait 24 hours.</p>
+      <dl class="receipt" id="receipt"></dl>
+      <button class="ghost" id="againBtn" type="button">Make another request</button>
+    </section>
+
+    <section class="history" id="history">
+      <h3>Your requests</h3>
+      <div id="reqList"></div>
+      <button class="link" id="clearBtn" type="button" hidden>Clear saved requests</button>
+    </section>
+
+    <p class="foot"> FULIZA LIMIT is allocated by limit. Prices set by your cooperative.</p>
+  </div>
+
+  <!-- Popup: details + pay -->
+  <dialog class="modal" id="payModal" aria-labelledby="modalTitle">
+    <div class="modal-in">
+      <div class="modal-head">
+        <div class="modal-plan">
+          <div class="mp-col"><span class="mp-cap">FULIZA LIMIT</span><span class="mp-num" id="modalCows">&mdash;<small>FULIZA LIMIT</small></span></div>
+          <div class="mp-col"><span class="mp-cap">Fee</span><span class="mp-fee" id="modalFee">&mdash;</span></div>
+        </div>
+        <button class="x" id="modalClose" type="button" aria-label="Close">&times;</button>
+      </div>
+
+      <p class="modal-title" id="modalTitle">Your details</p>
+      <label class="field">
+        <span class="field-label">National ID number</span>
+        <input id="idNumber" class="input" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 12345678" maxlength="8" />
+        <span class="error" id="idError" hidden></span>
+      </label>
+      <label class="field">
+        <span class="field-label">M-Pesa phone number</span>
+        <input id="mpesa" class="input" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 0712345678" />
+        <span class="error" id="mpesaError" hidden></span>
+      </label>
+
+      <button class="pay" id="payBtn" type="button"><span id="payLabel">Pay</span></button>
+      <p class="pay-status" id="payStatus" hidden><span class="spin" id="paySpin"></span><span id="payText"></span></p>
+      <p class="reassure">An M-Pesa prompt appears on your phone. You're only charged after you enter your PIN.</p>
+    </div>
+  </dialog>
+
+<script>
+/* =====================================================================
+   EDIT THIS BLOCK ONLY.
+   Real prices + secrets live on the server (lib/plans.js + Vercel env).
+   ===================================================================== */
+
+// false = LIVE real M-Pesa payments (needs the app deployed on Vercel with
+//         your PayHero + Redis env vars). Set to true only to preview the UI.
+const DEMO_MODE = false;
+
+// Hero background image. Any URL, or a local file you add to the project.
+const HERO_IMAGE = "https://africanmarketingconfederation.org/wp-content/uploads/2023/06/5-June-Brand-Valuation.jpg";
+
+// Shown only if the server plan list can't be loaded (e.g. opened as a local
+// file). In live mode the real prices always come from the server.
+ const FALLBACK_PLANS = [
+{ cows: 5000, fee: 149 },
+{ cows: 10000, fee: 250 },
+{ cows: 15000, fee: 500 },
+{ cows: 20000, fee: 1000 },
+{ cows: 25000, fee: 1500 },
+{ cows: 30000, fee: 2500 },
+{ cows: 35000, fee: 3500 },
+{ cows: 45000, fee: 5000 },
+{ cows: 50000, fee: 7500 },
+{ cows: 60000, fee: 9000 }
+];
+
+
+const FALLBACK_SETTINGS = { programName: " Fuliza limit", currency: "KES", waitHours: 24 };
+
+/* ===================== end of editable block ========================= */
+
+let CONFIG = FALLBACK_SETTINGS;
+const fmt = a => CONFIG.currency + " " + Number(a).toLocaleString();
+const isValidId = v => /^\d{7,8}$/.test(String(v).trim());
+function normalizePhone(v){ let s=String(v).replace(/[\s-]/g,"").trim(); if(s.startsWith("+"))s=s.slice(1); if(s.startsWith("254"))s="0"+s.slice(3); else if(/^[71]\d{8}$/.test(s))s="0"+s; return /^0(7|1)\d{8}$/.test(s)?s:null; }
+function makeReference(){ const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let r=""; for(let i=0;i<6;i++)r+=c[Math.floor(Math.random()*c.length)]; return "MB-"+r; }
+
+const Store=(()=>{ const KEY=" FULIZA LIMIT_requests"; let mem=[];
+  const read=()=>{ try{return JSON.parse(localStorage.getItem(KEY))||[];}catch(e){return mem;} };
+  const write=l=>{ mem=l; try{localStorage.setItem(KEY,JSON.stringify(l));}catch(e){} };
+  return { all:read, add(i){const l=read();l.unshift(i);write(l);return l;}, clear(){write([]);} };
+})();
+
+document.documentElement.style.setProperty("--hero", HERO_IMAGE ? 'url("'+HERO_IMAGE+'")' : "");
+
+document.addEventListener("DOMContentLoaded", async ()=>{
+  let selected=null, busy=false;
+  const $=id=>document.getElementById(id);
+  const plansEl=$("plans"), plansMsg=$("plansMsg"),
+        modal=$("payModal"), modalCows=$("modalCows"), modalFee=$("modalFee"),
+        idIn=$("idNumber"), idErr=$("idError"), mp=$("mpesa"), mpErr=$("mpesaError"),
+        payBtn=$("payBtn"), payLabel=$("payLabel"), payStatus=$("payStatus"), payText=$("payText"), paySpin=$("paySpin"),
+        reqCard=$("requestCard"), okCard=$("successCard"), lede=$("successLede"), receipt=$("receipt"),
+        reqList=$("reqList"), clearBtn=$("clearBtn");
+
+  // Load plans: server in live mode, fallback list otherwise.
+  let plans = FALLBACK_PLANS;
+  if(!DEMO_MODE){
+    try{
+      const data = await (await fetch("/api/plans")).json();
+      if(data && Array.isArray(data.plans) && data.plans.length){ plans = data.plans; CONFIG = data.settings || CONFIG; }
+    }catch(e){ /* keep fallback so the page still works */ }
+  }
+
+  plans.forEach(t=>{
+    const b=document.createElement("button");
+    b.type="button"; b.className="plan"; b.setAttribute("role","radio"); b.setAttribute("aria-checked","false");
+    b.innerHTML='<span class="cap">FULIZA LIMIT</span><span class="num">'+t.cows.toLocaleString()+'<small>KES</small></span><span class="fee-row"><span class="fee-k">Fee</span><span class="fee-v">'+fmt(t.fee)+'</span></span>';
+    b.addEventListener("click",()=>openModal(t,b));
+    plansEl.appendChild(b);
+  });
+
+  const clearErr=(i,e)=>{i.classList.remove("invalid");e.hidden=true;};
+  const badErr=(i,e,m)=>{i.classList.add("invalid");e.textContent=m;e.hidden=false;};
+  idIn.addEventListener("input",()=>clearErr(idIn,idErr));
+  mp.addEventListener("input",()=>clearErr(mp,mpErr));
+
+  function openModal(plan, btn){
+    selected=plan;
+    plansEl.querySelectorAll(".plan").forEach(x=>x.setAttribute("aria-checked","false"));
+    btn.setAttribute("aria-checked","true");
+    modalCows.innerHTML=plan.cows.toLocaleString()+'<small>KES</small>';
+    modalFee.textContent=fmt(plan.fee);
+    payLabel.textContent="Pay "+fmt(plan.fee)+" with M-Pesa";
+    idIn.value=""; mp.value=""; clearErr(idIn,idErr); clearErr(mp,mpErr);
+    payStatus.hidden=true; payBtn.disabled=false; setBusy(false);
+    modal.showModal();
+    setTimeout(()=>idIn.focus(), 60);
+  }
+  function closeModal(){ if(busy) return; modal.close(); }
+
+  $("modalClose").addEventListener("click", closeModal);
+  // click on backdrop (outside the inner card) closes
+  modal.addEventListener("click",(e)=>{ if(e.target===modal) closeModal(); });
+  // Esc: block while a payment is in progress
+  modal.addEventListener("cancel",(e)=>{ if(busy) e.preventDefault(); });
+
+  function setBusy(on){ busy=on; payBtn.disabled=on; idIn.disabled=on; mp.disabled=on; $("modalClose").style.visibility = on ? "hidden" : "visible"; }
+  function status(msg,isErr){ payStatus.hidden=false; payStatus.classList.toggle("err",!!isErr); paySpin.style.display=isErr?"none":""; payText.textContent=msg; }
+
+  payBtn.addEventListener("click",()=>{
+    if(!selected||busy) return;
+    let ok=true;
+    if(!isValidId(idIn.value)){ badErr(idIn,idErr,"Enter a valid ID (7 or 8 digits)."); ok=false; }
+    const phone=normalizePhone(mp.value);
+    if(!phone){ badErr(mp,mpErr,"Enter a valid M-Pesa number, e.g. 0712345678."); ok=false; }
+    if(!ok) return;
+    const record={ reference:makeReference(), cows:selected.cows, fee:selected.fee, idNumber:idIn.value.trim(), phone:phone, date:new Date().toISOString() };
+    setBusy(true);
+    DEMO_MODE ? demoPay(record) : realPay(record);
+  });
+
+  function demoPay(record){
+    status("Demo: sending M-Pesa prompt to "+record.phone+"\u2026");
+    setTimeout(()=>{ record.receipt="DEMO"+Math.floor(Math.random()*1e6); succeed(record); }, 1900);
+  }
+
+  async function realPay(record){
+    status("Sending payment request to "+record.phone+"\u2026");
+    let init;
+    try{
+      const r=await fetch("/api/pay",{ method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ cows:record.cows, phone_number:record.phone, external_reference:record.reference, customer_name:"ID "+record.idNumber }) });
+      init=await r.json();
+    }catch(e){ return failPay("Couldn't reach the payment service. Try again."); }
+    if(!init || init.success===false){ return failPay(init && init.error ? init.error : "Payment could not be started."); }
+    status("Check your phone and enter your M-Pesa PIN\u2026");
+    poll(record,0);
+  }
+
+  function poll(record,tries){
+    if(tries>40){ return failPay("No confirmation yet. If you paid it may still arrive; otherwise try again."); }
+    setTimeout(async ()=>{
+      let s; try{ s=await (await fetch("/api/status?ref="+encodeURIComponent(record.reference))).json(); }catch(e){ return poll(record,tries+1); }
+      const st=String(s.status||"").toLowerCase();
+      if(st==="success"){ record.receipt=s.receipt||null; return succeed(record); }
+      if(st==="failed"||st==="cancelled"){ return failPay(s.desc||"Payment failed or was cancelled."); }
+      poll(record,tries+1);
+    },3000);
+  }
+
+  function failPay(msg){ setBusy(false); status(msg,true); if(selected) payLabel.textContent="Pay "+fmt(selected.fee)+" with M-Pesa"; }
+
+  function succeed(record){
+    record.status="Paid"; Store.add(record); renderHistory();
+    setBusy(false); modal.close();
+    receipt.innerHTML=
+      '<div class="row"><span class="k">Reference</span><span class="v ref">'+record.reference+'</span></div>'+
+      (record.receipt?'<div class="row"><span class="k">M-Pesa code</span><span class="v">'+record.receipt+'</span></div>':'')+
+      '<div class="row"><span class="k">KES</span><span class="v">'+record.cows.toLocaleString()+'</span></div>'+
+      '<div class="row"><span class="k">Paid</span><span class="v">'+fmt(record.fee)+'</span></div>'+
+      '<div class="row"><span class="k">ID number</span><span class="v">'+record.idNumber+'</span></div>'+
+      '<div class="row"><span class="k">M-Pesa</span><span class="v">'+record.phone+'</span></div>';
+    lede.textContent="Payment confirmed. Please wait "+CONFIG.waitHours+" hours \u2014 we'll send delivery details to "+record.phone+".";
+    reqCard.hidden=true; okCard.hidden=false; window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  $("againBtn").addEventListener("click",()=>{
+    selected=null; plansEl.querySelectorAll(".plan").forEach(x=>x.setAttribute("aria-checked","false"));
+    okCard.hidden=true; reqCard.hidden=false; window.scrollTo({top:0,behavior:"smooth"});
+  });
+
+  function renderHistory(){
+    const list=Store.all();
+    if(!list.length){ reqList.innerHTML='<p class="empty">No requests yet. Your paid requests will appear here.</p>'; clearBtn.hidden=true; return; }
+    reqList.innerHTML=list.map(r=>{
+      const d=new Date(r.date).toLocaleDateString(undefined,{day:"numeric",month:"short"});
+      return '<div class="req"><div><div class="req-ref">'+r.reference+'</div><div class="req-sub">'+r.cows.toLocaleString()+' \u00b7 '+fmt(r.fee)+' \u00b7 '+r.phone+' \u00b7 '+d+'</div></div><span class="tag">Awaiting '+CONFIG.waitHours+'h</span></div>';
+    }).join("");
+    clearBtn.hidden=false;
+  }
+  clearBtn.addEventListener("click",()=>{ if(confirm("Remove all saved requests from this device?")){ Store.clear(); renderHistory(); } });
+  renderHistory();
+});
+</script>
+</body>
+</html>

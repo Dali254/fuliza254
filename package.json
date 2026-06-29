@@ -1,0 +1,17 @@
+{
+  "name": "fertilizer-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fertilizer request app with PayHero MPESA STK push (runs on cPanel Node.js App or Vercel)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "@upstash/redis": "^1.34.3"
+  }
+}

@@ -1,0 +1,14 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/lipawinc/m.lipawin.com"
+PassengerBaseURI "/"
+PassengerNodejs "/home/lipawinc/nodevenv/m.lipawin.com/18/bin/node"
+PassengerAppType node
+PassengerStartupFile app.js
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
+SetEnv PAYHERO_AUTH Basic SlJvSEdUOVFMUmg2RjFhRktlTVY6ZXhkMUFMR3VpUmRucjhVeFRtVEl3Tk9RdnEzUHdjemUwamNCdGwyVQ==
+SetEnv PAYHERO_CHANNEL_ID 5580
+SetEnv PAYHERO_CALLBACK_URL https://m.lipawin.com/api/callback
+</IfModule>
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END
